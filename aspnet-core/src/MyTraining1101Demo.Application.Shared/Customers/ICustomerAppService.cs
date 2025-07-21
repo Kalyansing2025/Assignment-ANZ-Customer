@@ -8,14 +8,14 @@ namespace MyTraining1101Demo.Customers
 {
     public interface ICustomerAppService : IApplicationService
     {
-        Task<PagedResultDto<CustomerDto>> GetAll(GetAllCustomersInput input);
+        Task<PagedResultDto<CustomerDto>> GetAllCustomer(GetAllCustomersInput input);
 
-        Task<GetCustomerForEditOutput> GetCustomerForEdit(int id);
+        Task<GetCustomerForEditOutput> GetViewCustomer(int id);
 
-        Task CreateOrEdit(CreateOrEditCustomerDto input);
+        Task CreateOrEditCustomer(CreateOrEditCustomerDto input);
 
-        Task Delete(EntityDto input);
+        Task DeleteCustomer(EntityDto input);
 
-        Task<List<UserLookupDto>> GetUnassignedUsers();
+        Task<List<UserLookupDto>> GetUnassignedAndAssignedUsers();
     }
 }

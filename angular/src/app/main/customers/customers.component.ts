@@ -96,7 +96,7 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
     customerDto.address = this.customer.address;
     customerDto.userIds = this.selectedUserIds;
 
-    this._customerService.createOrEdit(customerDto)
+    this._customerService.createOrEditCustomer(customerDto)
       .pipe(finalize(() => this.saving = false))
       .subscribe(() => {
         if (this.isEditMode) {
@@ -112,7 +112,7 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
 
    updateAvailableUsers(): void {
    
-    this._customerService.getUnassignedUsers()
+    this._customerService.getUnassignedAndAssignedUsers()
       .subscribe(result => {
         this.availableUsers = result;
         
@@ -170,7 +170,7 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
 
     if (id) {
       this.saving = true;
-      this._customerService.getCustomerForEdit(id)
+      this._customerService.getViewCustomer(id)
         .pipe(finalize(() => this.saving = false))
         .subscribe(result => {
 
@@ -181,7 +181,7 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
             registrationDate = new Date(result.customer.registrationDate.toString());
           }
 
-          // Update the customer model
+         
           this.customer = {
             name: result.customer.name,
             email: result.customer.email,
@@ -221,7 +221,7 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
   }
   
   cancel(): void {
-    // Reset customer model
+    
     this.customer = {
       name: '',
       email: '',
@@ -244,14 +244,14 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
 
   getCustomers(): void {
     this._customerService
-      .getAll(this.keyword, undefined, this.skipCount, this.maxResultCount)
+      .getAllCustomer(this.keyword, undefined, this.skipCount, this.maxResultCount)
       .subscribe(result => {
         this.customers = result.items;
         this.customers.sort((a, b) => b.id - a.id);
         this.totalCount = result.totalCount;
       });
   }
-  //pagination
+  
   onSearch(): void {
     this.skipCount = 0;
     this.getCustomers();
@@ -308,7 +308,7 @@ nextPage(): void {
 deleteCustomer(id: number): void {
     this.message.confirm('Are you sure you want to delete?', 'Confirm', result => {
       if (result) {
-        this._customerService.delete(id).subscribe(() => {
+        this._customerService.deleteCustomer(id).subscribe(() => {
           this.notify.success('Customer deleted successfully.');
           this.getCustomers();
            this.loadAllUsers();

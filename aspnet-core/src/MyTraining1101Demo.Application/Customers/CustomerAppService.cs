@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
@@ -7,6 +8,7 @@ using Abp.ObjectMapping;
 using Abp.UI;
 using Castle.Core.Resource;
 using Microsoft.EntityFrameworkCore;
+using MyTraining1101Demo.Authorization;
 using MyTraining1101Demo.Authorization.Users;
 using MyTraining1101Demo.Customers.Dtos;
 using Stripe;
@@ -16,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace MyTraining1101Demo.Customers
 {
+    [AbpAuthorize(AppPermissions.Pages_Customers)]
     public class CustomerAppService : ApplicationService, ICustomerAppService
     {
         private readonly IRepository<Customer> _customerRepository;
@@ -23,11 +26,13 @@ namespace MyTraining1101Demo.Customers
         private readonly IRepository<User, long> _userRepository;
         private readonly IObjectMapper _objectMapper;
 
-        public CustomerAppService(
+        public CustomerAppService
+            (
             IRepository<Customer> customerRepository,
-    IRepository<User, long> userRepository,
-    IRepository<CustomerUser> customerUserRepository, 
-    IObjectMapper objectMapper)
+            IRepository<User, long> userRepository,
+            IRepository<CustomerUser> customerUserRepository, 
+            IObjectMapper objectMapper
+            )
         {
             _customerRepository = customerRepository;
             _userRepository = userRepository;
@@ -35,8 +40,9 @@ namespace MyTraining1101Demo.Customers
             _objectMapper = objectMapper;
         }
 
-        // GET: /api/services/app/Customer/GetAll
-        public async Task<PagedResultDto<CustomerDto>> GetAll(GetAllCustomersInput input)
+
+        [AbpAuthorize(AppPermissions.Pages_Customers_View)]
+        public async Task<PagedResultDto<CustomerDto>> GetAllCustomer(GetAllCustomersInput input)
         {
             var filter = input.Filter?.Trim() ?? string.Empty;
 
@@ -78,8 +84,32 @@ namespace MyTraining1101Demo.Customers
             return new PagedResultDto<CustomerDto>(totalCount, customerDtos);
         }
 
-        // GET: /api/services/app/Customer/GetCustomerForEdit?id=1
-        public async Task<GetCustomerForEditOutput> GetCustomerForEdit(int id)
+        private async Task CreateCustomer(CreateOrEditCustomerDto input)
+        {
+            var customer = new Customer
+            {
+                Name = input.Name,
+                Email = input.Email,
+                RegistrationDate = input.RegistrationDate,
+                PhoneNo = input.PhoneNo,
+                Address = input.Address
+            };
+
+            await _customerRepository.InsertAsync(customer);
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            foreach (var userId in input.UserIds)
+            {
+                await _customerUserRepository.InsertAsync(new CustomerUser
+                {
+                    CustomerId = customer.Id,
+                    UserId = userId
+                });
+            }
+        }
+
+        [AbpAuthorize(AppPermissions.Pages_Customers_View)]
+        public async Task<GetCustomerForEditOutput> GetViewCustomer(int id)
         {
             var customer = await _customerRepository.GetAsync(id);
 
@@ -112,40 +142,16 @@ namespace MyTraining1101Demo.Customers
             };
         }
 
-        // POST: /api/services/app/Customer/CreateOrEdit
-        public async Task CreateOrEdit(CreateOrEditCustomerDto input)
+
+        [AbpAuthorize(AppPermissions.Pages_Customers_Edit)]
+        public async Task CreateOrEditCustomer(CreateOrEditCustomerDto input)
         {
             if (input.Id.HasValue)
                 await UpdateCustomer(input);
             else
                 await CreateCustomer(input);
         }
-
-        private async Task CreateCustomer(CreateOrEditCustomerDto input)
-        {
-            var customer = new Customer
-            {
-                Name = input.Name,
-                Email = input.Email,
-                RegistrationDate = input.RegistrationDate,
-                PhoneNo = input.PhoneNo,
-                Address = input.Address
-            };
-
-            await _customerRepository.InsertAsync(customer);
-            await CurrentUnitOfWork.SaveChangesAsync(); 
-
-            foreach (var userId in input.UserIds)
-            {
-                await _customerUserRepository.InsertAsync(new CustomerUser
-                {
-                    CustomerId = customer.Id,
-                    UserId = userId
-                });
-            }
-        }
-
-
+             
         private async Task UpdateCustomer(CreateOrEditCustomerDto input)
         {
             var customer = await _customerRepository.GetAsync(input.Id.Value);
@@ -179,15 +185,14 @@ namespace MyTraining1101Demo.Customers
         }
 
 
-        // DELETE: /api/services/app/Customer/Delete?id=1
-        public async Task Delete(EntityDto input)
+        [AbpAuthorize(AppPermissions.Pages_Customers_Delete)]
+        public async Task DeleteCustomer(EntityDto input)
         {
             await _customerRepository.DeleteAsync(input.Id);
             await _customerUserRepository.DeleteAsync(x => x.CustomerId == input.Id);
         }
 
-        // GET: /api/services/app/Customer/GetUnassignedUsers
-        public async Task<List<UserLookupDto>> GetUnassignedUsers()
+        public async Task<List<UserLookupDto>> GetUnassignedAndAssignedUsers()
         {
             var assignedUserIds = await _customerUserRepository
                 .GetAll()

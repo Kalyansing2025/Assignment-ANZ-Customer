@@ -116,6 +116,14 @@ namespace MyTraining1101Demo.Authorization
             administration.CreateChildPermission(AppPermissions.Pages_Administration_Host_Maintenance, L("Maintenance"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
             administration.CreateChildPermission(AppPermissions.Pages_Administration_HangfireDashboard, L("HangfireDashboard"), multiTenancySides: _isMultiTenancyEnabled ? MultiTenancySides.Host : MultiTenancySides.Tenant);
             administration.CreateChildPermission(AppPermissions.Pages_Administration_Host_Dashboard, L("Dashboard"), multiTenancySides: MultiTenancySides.Host);
+
+            //Customer
+            var customers = context.CreatePermission(AppPermissions.Pages_Customers, L("Customers"));
+            customers.CreateChildPermission(AppPermissions.Pages_Customers_Create, L("Create"));
+            customers.CreateChildPermission(AppPermissions.Pages_Customers_Edit, L("Edit"));
+            customers.CreateChildPermission(AppPermissions.Pages_Customers_Delete, L("Delete"));
+            customers.CreateChildPermission(AppPermissions.Pages_Customers_View, L("View"));
+
         }
 
         private static ILocalizableString L(string name)

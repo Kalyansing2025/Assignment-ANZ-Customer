@@ -32,23 +32,22 @@
               </div>
             </div>
           </div>
-          <!-- customer table  -->
+       
           <div class="table-responsive " style="min-height: 350px;width: 100%; overflow-x: auto;">
             <table class="table table-hover table-striped table-fixed table-custom">
-              <thead class="thead-dark ">
+              <thead class="thead " style="background: #348ff1 !important; color: white !important; box-shadow: 0 2px 4px rgba(4, 24, 244, 0.3);">
                 <tr>
-                  <!-- <th>Sr No</th> -->
+                
                   <th>Name</th>
                   <th>Email</th>
                   <th>Address</th>
                   <th>Registration Date</th>
-                  <!-- <th>Assigned Users</th> -->
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let customer of customers; let i=index">
-                  <!-- <td class="text-truncate" style="max-width: 60px;">{{ skipCount + i + 1 }}</td> -->
+                 
                   <td class="text-truncate" title="{{ customer.name}}" style="max-width: 120px;">{{ customer.name
                     }}
                   </td>
@@ -62,11 +61,8 @@
                     date:'dd-MM-yyyy'
                     }}
                   </td>
-                  <!-- <td class="text-truncate" title="{{ customer.userNames}}" style="max-width: 150px;"><i
-                  class="bi bi-person text-dark">{{
-                    customer.userNames ? customer.userNames.split(',').length : 0 }}
-                  </i>
-                </td> -->
+                
+                  
                   <td style="max-width: 80px; cursor: pointer;">
                     <div class="dropdown">
                       <button class="btn btn-sm btn-outline-secondary " type="button" [id]="'dropdown_' + customer.id"
@@ -75,14 +71,23 @@
                       </button>
                       <div class="dropdown-menu dropdown-menu-right "
                         [attr.aria-labelledby]="'dropdown_' + customer.id">
-                        <a class="dropdown-item" (click)="show(customer.id)">
-                          Edit
+                        <a class="dropdown-item" (click)="show(customer.id)" 
+                           style="transition: all 0.3s ease; cursor: pointer;" 
+                           (mouseenter)="$event.target.style.backgroundColor='#007bff'; $event.target.style.color='white'; $event.target.style.transform='translateX(5px)'; $event.target.style.borderRadius='8px'"
+                           (mouseleave)="$event.target.style.backgroundColor=''; $event.target.style.color=''; $event.target.style.transform=''; $event.target.style.borderRadius=''">
+                          <i class="fa fa-edit me-2"></i>Edit
                         </a>
-                        <a class="dropdown-item" (click)="viewUsers(customer.id)">
-                          View
+                        <a class="dropdown-item" (click)="viewUsers(customer.id)" 
+                           style="transition: all 0.3s ease; cursor: pointer;" 
+                           (mouseenter)="$event.target.style.backgroundColor='#28a745'; $event.target.style.color='white'; $event.target.style.transform='translateX(5px)'; $event.target.style.borderRadius='8px'"
+                           (mouseleave)="$event.target.style.backgroundColor=''; $event.target.style.color=''; $event.target.style.transform=''; $event.target.style.borderRadius=''">
+                          <i class="fa fa-eye me-2"></i>View
                         </a>
-                        <a class="dropdown-item " (click)="deleteCustomer(customer.id)">
-                          Delete
+                        <a class="dropdown-item " (click)="deleteCustomer(customer.id)" 
+                           style="transition: all 0.3s ease; cursor: pointer;" 
+                           (mouseenter)="$event.target.style.backgroundColor='#dc3545'; $event.target.style.color='white'; $event.target.style.transform='translateX(5px)'; $event.target.style.borderRadius='8px'"
+                           (mouseleave)="$event.target.style.backgroundColor=''; $event.target.style.color=''; $event.target.style.transform=''; $event.target.style.borderRadius=''">
+                          <i class="fa fa-trash me-2"></i>Delete
                         </a>
                       </div>
                     </div>
@@ -95,7 +100,8 @@
               <i class="bi bi-emoji-frown display-2"></i>
             </div>
           </div>
-          <!-- Pagination -->
+          
+          
           <nav aria-label="Customer pagination" *ngIf="totalCount > 0">
             <div class="d-flex justify-content-between align-items-center">
 
@@ -158,12 +164,13 @@
 
   </div>
 </div>
-<!-- ---------------Modals------- -->
+
+
 <div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel"
   aria-hidden="true">
   <div class="modal-dialog" role="document" style="max-width: 800px;height: 80vh; ">
     <div class="modal-content">
-      <div class="modal-header linearGrad p-2">
+      <div class="modal-header p-2" style="background: #348ff1 !important; color: white !important;">
         <h5 class="modal-title text-white" id="customerModalLabel">{{ isEditMode ? 'Edit Customer and Users' :
           'Create
           New
@@ -219,8 +226,17 @@
                 </div>
               </div>
 
-              <!-- new dropdown  -->
+              <!-- Address section moved here -->
               <div class="col-md-6 mb-3">
+                <div class="form-group">
+                  <label for="address">Address</label>
+                  <textarea class="form-control" id="address" name="address" [(ngModel)]="customer.address"
+                    rows="3"></textarea>
+                </div>
+              </div>
+
+              <!-- Add Users section moved here -->
+              <div class="col-md-12 mb-3">
                 <label class="">Add Users <span class="text-danger">*</span></label>
                 <div class="input-group">
                   <div class="dropdown w-100">
@@ -253,18 +269,10 @@
                 </div>
               </div>
 
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="address">Address</label>
-                  <textarea class="form-control" id="address" name="address" [(ngModel)]="customer.address"
-                    rows="3"></textarea>
-                </div>
-              </div>
-
 
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
-                <button type="submit" class="btn btn-primary" [disabled]="saving">
+                <button type="button" class="btn btn-danger" (click)="cancel()">Cancel</button>
+                <button type="submit" class="btn btn-success" [disabled]="saving">
                   <i class="fa fa-spin fa-spinner" *ngIf="saving"></i> {{isEditMode? 'Update' :'Save'}}
                 </button>
               </div>
@@ -285,7 +293,7 @@
   aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header linearGrad text-white p-2">
+      <div class="modal-header text-white p-2" style="background: #348ff1 !important; color: white !important;">
         <h5 class="modal-title text-white" id="viewCustomerModalLabel">
           Customers and User Details
         </h5>

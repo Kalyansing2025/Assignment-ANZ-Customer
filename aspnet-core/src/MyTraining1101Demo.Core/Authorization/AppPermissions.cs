@@ -98,5 +98,13 @@
         public const string Pages_Administration_Host_Settings = "Pages.Administration.Host.Settings";
         public const string Pages_Administration_Host_Dashboard = "Pages.Administration.Host.Dashboard";
 
+        //Customer
+        public const string Pages_Customers = "Pages.Customers";
+        public const string Pages_Customers_Create = "Pages.Customers.Create";
+        public const string Pages_Customers_Edit = "Pages.Customers.Edit";
+        public const string Pages_Customers_Delete = "Pages.Customers.Delete";
+        public const string Pages_Customers_View = "Pages.Customers.View";
+
+
     }
 }
