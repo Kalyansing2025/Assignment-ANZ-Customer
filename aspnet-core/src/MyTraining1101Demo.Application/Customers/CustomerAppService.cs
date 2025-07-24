@@ -55,7 +55,7 @@ namespace MyTraining1101Demo.Customers
             var totalCount = await query.CountAsync();
 
             var customers = await query
-                .OrderBy(c => c.Name)
+                .OrderBy(c => c.Name) 
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount)
                 .ToListAsync();

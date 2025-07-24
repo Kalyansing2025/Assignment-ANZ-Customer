@@ -1,17 +1,9 @@
-.textColor{
+.fondc{
     color: rgba(41, 170, 209, 0.8) !important;
 }
-.createBtn{
-    background-color: #2994E9 !important;
-    color: white !important;
-}
+
 .table-custom th,
 .table-custom td {
   padding-left: 19px !important;
-}
-
-.linearGrad{
-    background-color: rgb(12, 12, 75);
-  color: white !important;
 }
 

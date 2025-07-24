@@ -6,9 +6,9 @@
         <h4 class="p-2 mt-3 fw-bolder"><span class="textColor">Customers</span> &ensp; | Manage Customer and Customer
           user</h4>
         <div>
-          <button class="btn createBtn px-2 me-2 p-2 rounded-1" (click)="show(null)">
+          <button class="btn btn-primary px-2 me-2 p-2 rounded-1" (click)="show(null)">
             <i class="fa fa-plus text-white"></i>
-            <span class="btn-shine">
+            <span class="">
               Create New Customer
             </span>
           </button>
@@ -27,7 +27,7 @@
                 <input type="text" class="form-control border border-transparent" style="height: 100%;"
                   [(ngModel)]="keyword" placeholder="Search..." (keyup.enter)="onSearch()">
                 <button class="btn " type="button" (click)="onSearch()">
-                  <i class="fa fa-search textColor fs-3 fw-bolder"></i>
+                  <i class="fa fa-search fondc fs-3 fw-bolder"></i>
                 </button>
               </div>
             </div>
@@ -67,7 +67,7 @@
                     <div class="dropdown">
                       <button class="btn btn-sm btn-outline-secondary " type="button" [id]="'dropdown_' + customer.id"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="bi bi-three-dots textColor"></i>
+                        <i class="bi bi-three-dots fondc"></i>
                       </button>
                       <div class="dropdown-menu dropdown-menu-right "
                         [attr.aria-labelledby]="'dropdown_' + customer.id">
@@ -147,7 +147,6 @@
                 <div class="mr-3">
                   <select class="form-control form-control-sm" [(ngModel)]="maxResultCount"
                     (change)="onPageSizeChange()">
-                    <option value="1">1</option>
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="25">25</option>
