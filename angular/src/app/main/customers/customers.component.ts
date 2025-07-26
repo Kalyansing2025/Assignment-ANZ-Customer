@@ -2,8 +2,10 @@ import {
   Component,
   Injector,
   OnInit,
+  OnDestroy,
   ViewChild
 } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -28,7 +30,9 @@ declare var $: any;
   styleUrls: ['./customers.component.css'],
   animations: [appModuleAnimation()]
 })
-export class CustomersComponent extends AppComponentBase implements OnInit {
+export class CustomersComponent extends AppComponentBase implements OnInit, OnDestroy {
+  @ViewChild('customerForm', { static: false }) customerForm: NgForm;
+  
   customers: CustomerDto[] = [];
   keyword = '';
   skipCount = 0;
@@ -67,6 +71,13 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
   ngOnInit(): void {
     this.getCustomers();
     this.loadAllUsers();
+    this.setupModalEventListeners();
+  }
+
+  ngOnDestroy(): void {
+    // Clean up event listeners
+    $(document).off('hidden.bs.modal', '#customerModal');
+    $(document).off('click');
   }
 
     datePickerConfig: Partial<BsDatepickerConfig> = {
@@ -74,6 +85,32 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
     showWeekNumbers: false,
     dateInputFormat: 'DD-MM-YYYY'
   };
+
+  setupModalEventListeners(): void {
+    // Setup event listener for when modal is hidden
+    $(document).on('hidden.bs.modal', '#customerModal', () => {
+      this.clearFormValidation();
+    });
+
+    // Setup event listener for clicks outside modal
+    $(document).on('click', (event: any) => {
+      const modal = $('#customerModal');
+      if (modal.hasClass('show') && !$(event.target).closest('.modal-content').length) {
+        this.clearFormValidation();
+      }
+    });
+  }
+
+  clearFormValidation(): void {
+    if (this.customerForm) {
+      // Reset form validation state without changing values
+      Object.keys(this.customerForm.controls).forEach(key => {
+        const control = this.customerForm.controls[key];
+        control.markAsUntouched();
+        control.markAsPristine();
+      });
+    }
+  }
 
  save(form: any): void {
     if (form.invalid) {
@@ -143,6 +180,13 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
       }
     }
   }
+
+  removeSelectedUser(userId: number): void {
+    const index = this.selectedUserIds.indexOf(userId);
+    if (index > -1) {
+      this.selectedUserIds.splice(index, 1);
+    }
+  }
   
   loadAllUsers(): void {
   const url = AppConsts.remoteServiceBaseUrl + '/api/services/app/User/GetUsers';
@@ -167,6 +211,9 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
     this.currentCustomerId = id;
     this.isEditMode = id !== null;
     this.selectedUserIds = [];
+
+    // Clear any existing validation
+    this.clearFormValidation();
 
     if (id) {
       this.saving = true;
@@ -221,7 +268,7 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
   }
   
   cancel(): void {
-    
+    // Reset customer model
     this.customer = {
       name: '',
       email: '',
@@ -229,6 +276,11 @@ export class CustomersComponent extends AppComponentBase implements OnInit {
       phoneNo: '',
       address: ''
     };
+    
+    // Reset form validation state
+    if (this.customerForm) {
+      this.customerForm.resetForm();
+    }
     
     this.currentCustomerId = null;
     this.isEditMode = false;

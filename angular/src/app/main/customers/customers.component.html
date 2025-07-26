@@ -245,7 +245,7 @@
                     </button>
 
                     <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton"
-                      style="padding: 5px; max-height: 200px; overflow-y: auto;" (click)="$event.stopPropagation()">
+                      style="padding: 5px; max-height: 400px; max-width: 300px; overflow-y: auto;" (click)="$event.stopPropagation()">
                       <li class="dropdown-item-custom" *ngFor="let user of availableUsers"
                         (click)="$event.stopPropagation()">
                         <div class="form-check d-flex align-items-center">
@@ -264,6 +264,28 @@
                       </li>
                     </ul>
 
+                  </div>
+                </div>
+                
+                <!-- Selected Users Display -->
+                <div *ngIf="selectedUserIds.length > 0" class="mt-3">
+                  <label class="form-label text-muted mb-2">Selected Users:</label>
+                  <div class="selected-users-container p-2 border rounded bg-light">
+                    <div class="d-flex flex-wrap gap-2">
+                      <span *ngFor="let userId of selectedUserIds" 
+                            class="badge bg-primary d-flex align-items-center px-2 py-1">
+                        <span class="me-2">{{ getUserNameById(userId) }}</span>
+                        <button type="button" 
+                                class="btn-close btn-close-white btn-sm ms-1" 
+                                style="font-size: 0.6rem;" 
+                                (click)="removeSelectedUser(userId)"
+                                aria-label="Remove user">
+                        </button>
+                      </span>
+                    </div>
+                    <!-- <small class="text-muted d-block mt-1">
+                      {{ selectedUserIds.length }} user{{ selectedUserIds.length !== 1 ? 's' : '' }} selected
+                    </small> -->
                   </div>
                 </div>
               </div>
